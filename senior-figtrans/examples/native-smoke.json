@@ -1,0 +1,26 @@
+{
+  "name": "native_smoke",
+  "canvas": {"width": 720, "height": 420},
+  "objects": [
+    {"id":"panel_left","type":"roundRect","x":24,"y":52,"w":304,"h":294,"fill":"#EDF4FA","stroke":"#557994","stroke_width":1.2},
+    {"id":"panel_right","type":"roundRect","x":392,"y":52,"w":304,"h":294,"fill":"#F2F0FA","stroke":"#78659B","stroke_width":1.2},
+    {"id":"title","type":"text","x":24,"y":12,"w":672,"h":30,"text":"Native editable objects in both formats","font_size":22,"bold":true,"stroke":"none"},
+    {"id":"left_label","type":"text","x":40,"y":64,"w":272,"h":30,"text":"1  Input stage","font_size":18,"bold":true,"stroke":"none"},
+    {"id":"right_label","type":"text","x":408,"y":64,"w":272,"h":30,"text":"2  Output stage","font_size":18,"bold":true,"stroke":"none"},
+    {"id":"input","type":"rect","x":94,"y":112,"w":164,"h":52,"text":"Input","fill":"#FFFFFF","stroke":"#477591","stroke_width":1.2,"font_size":18},
+    {"id":"output","type":"rect","x":462,"y":112,"w":164,"h":52,"text":"Output","fill":"#FFFFFF","stroke":"#79629A","stroke_width":1.2,"font_size":18},
+    {"id":"left_motif_1","type":"ellipse","x":76,"y":218,"w":48,"h":48,"text":"A","fill":"#FFFFFF","stroke":"#477591","stroke_width":1.2},
+    {"id":"left_motif_2","type":"ellipse","x":152,"y":218,"w":48,"h":48,"text":"B","fill":"#FFFFFF","stroke":"#477591","stroke_width":1.2},
+    {"id":"left_motif_3","type":"ellipse","x":228,"y":218,"w":48,"h":48,"text":"C","fill":"#FFFFFF","stroke":"#477591","stroke_width":1.2},
+    {"id":"right_motif_1","type":"ellipse","x":444,"y":218,"w":48,"h":48,"text":"A","fill":"#FFFFFF","stroke":"#79629A","stroke_width":1.2},
+    {"id":"right_motif_2","type":"ellipse","x":520,"y":218,"w":48,"h":48,"text":"B","fill":"#FFFFFF","stroke":"#79629A","stroke_width":1.2},
+    {"id":"right_motif_3","type":"ellipse","x":596,"y":218,"w":48,"h":48,"text":"C","fill":"#FFFFFF","stroke":"#79629A","stroke_width":1.2},
+    {"id":"caption","type":"text","x":50,"y":354,"w":620,"h":36,"text":"Move the named nodes to verify attached connectors.","font_size":15,"stroke":"none"},
+    {"id":"main_flow","type":"connector","from":"input","to":"output","from_side":"right","to_side":"left","route":"straight","stroke":"#374F68","stroke_width":3,"head":"triangle","head_size":"small"},
+    {"id":"left_drop","type":"connector","from":"input","to":"left_motif_2","from_side":"bottom","to_side":"top","route":"straight","stroke":"#477591","stroke_width":1.7,"head":"triangle","head_size":"small"},
+    {"id":"right_elbow","type":"connector","from":"output","to":"right_motif_3","from_side":"bottom","to_side":"top","route":"elbow","stroke":"#79629A","stroke_width":1.7,"head":"triangle","head_size":"small"},
+    {"id":"feedback","type":"polyline","points":[[544,290],[544,320],[176,320],[176,290]],"stroke":"#A84D76","stroke_width":2,"head":"triangle","head_size":"small"},
+    {"id":"motif_link_left","type":"line","points":[[124,242],[152,242]],"stroke":"#477591","stroke_width":1.2,"head":"none"},
+    {"id":"motif_link_right","type":"line","points":[[492,242],[520,242]],"stroke":"#79629A","stroke_width":1.2,"head":"none"}
+  ]
+}

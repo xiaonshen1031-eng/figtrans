@@ -1,0 +1,47 @@
+{
+  "name": "Senior-FigTrans",
+  "display_name": "FigTrans",
+  "version": "1.1.0",
+  "author": "XiaoN",
+  "copyright": "NCEPU-Senior",
+  "startup_notice": "**Copyright © NCEPU-Senior · Author: XiaoN**",
+  "license": "MIT",
+  "download_url": "downloads/figtrans-v1.1.0.zip",
+  "bytes": 47688,
+  "sha256": "17c86b74cf945efc91513f42ebbabb926e54a336a668d289dfa0e8fa313ab63b",
+  "file_count": 14,
+  "source_index_url": "source/index.json",
+  "install_url": "docs/install.md",
+  "license_url": "docs/LICENSE.txt",
+  "third_party_notices_url": "docs/THIRD_PARTY_NOTICES.md",
+  "targets": [
+    "PowerPoint PPTX",
+    "Visio VSDX",
+    "Both"
+  ],
+  "capabilities": [
+    "Reference-led reconstruction of editable text, shapes, paths, groups and native connectors",
+    "Preserving accepted layouts, typography, palettes and local edits",
+    "Native file save/reopen, package inspection, visual review and representative edit/move checks",
+    "Native Visio text formula guidance with character-range subscripts; MathType remains a distinct optional requirement"
+  ],
+  "requirements": [
+    "An available Codex environment with the skill installed",
+    "Windows PowerShell 5.1 and installed desktop PowerPoint/Visio for the bundled COM helper",
+    "Python 3 for the standard-library package auditor",
+    "Separately available MathType integration if real MathType objects are requested"
+  ],
+  "limitations": [
+    "This website does not provide an online conversion backend",
+    "The primitive scene helper does not recognize images or automatically build advanced groups, charts, icons or equation OLE",
+    "Atomic photos and approved illustrations remain images; object counts do not establish complete fidelity",
+    "Target-host availability and requested equation technology must be verified for each task"
+  ],
+  "privacy_review": {
+    "status": "passed",
+    "personal_paths": false,
+    "credentials": false,
+    "private_paper_assets": false,
+    "installed_source_modified": false
+  }
+}

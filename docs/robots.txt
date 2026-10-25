@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://xiaonshen1031-eng.github.io/figtrans/sitemap.xml

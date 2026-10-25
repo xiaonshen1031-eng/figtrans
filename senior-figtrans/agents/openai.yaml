@@ -1,0 +1,6 @@
+interface:
+  display_name: "Senior-FigTrans"
+  short_description: "将参考图片重建成可编辑 PPTX 或 Visio，并检查箭头、排版与公式"
+  default_prompt: "使用 $senior-figtrans 将参考图重建为可编辑文件，保留其风格并检查细节；目标未确定时提供 PPTX、Visio 或两者的选项。"
+policy:
+  allow_implicit_invocation: true

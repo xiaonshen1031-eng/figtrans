@@ -1,0 +1,110 @@
+{
+  "name": "Senior-FigTrans",
+  "display_name": "FigTrans",
+  "version": "1.1.0",
+  "license": "MIT",
+  "author": "XiaoN",
+  "copyright": "NCEPU-Senior",
+  "base_url": "source/senior-figtrans/",
+  "file_count": 14,
+  "files": [
+    {
+      "path": "agents/openai.yaml",
+      "url": "source/senior-figtrans/agents/openai.yaml",
+      "bytes": 371,
+      "sha256": "1a9b80780c6c6fac65f52515aceb5b87171075a9aa8112dd93f581e8b1960361",
+      "type": "yaml"
+    },
+    {
+      "path": "examples/native-smoke.json",
+      "url": "source/senior-figtrans/examples/native-smoke.json",
+      "bytes": 3124,
+      "sha256": "709b97811064c2fe7e7cdacb4426998f47818bd0df2b1e1a7791824eeaefd72a",
+      "type": "json"
+    },
+    {
+      "path": "LICENSE",
+      "url": "source/senior-figtrans/LICENSE",
+      "bytes": 1083,
+      "sha256": "eb64e9fb2dcb4ff93bb15724e5c431469958435fa65802e590c84695f39212f7",
+      "type": "text"
+    },
+    {
+      "path": "references/equations.md",
+      "url": "source/senior-figtrans/references/equations.md",
+      "bytes": 9252,
+      "sha256": "965cb8720b56cd60f4e5f08efa82fd50975ee5e22638dd5acc347265e62c7ffa",
+      "type": "text"
+    },
+    {
+      "path": "references/powerpoint.md",
+      "url": "source/senior-figtrans/references/powerpoint.md",
+      "bytes": 4539,
+      "sha256": "7f73cbf8655d3e0489caaf84951639d5cd870405133bbf7fce078720dcadd2a7",
+      "type": "text"
+    },
+    {
+      "path": "references/quality-and-repair.md",
+      "url": "source/senior-figtrans/references/quality-and-repair.md",
+      "bytes": 6628,
+      "sha256": "37c30a379a02db66a725b39800b0a87c05f6486c24f885899db55fcff240c81b",
+      "type": "text"
+    },
+    {
+      "path": "references/scene-helper.md",
+      "url": "source/senior-figtrans/references/scene-helper.md",
+      "bytes": 7361,
+      "sha256": "be0614be51b9a9a7641808157a04fa0435b73d31ca72350e91f6827a1567c90d",
+      "type": "text"
+    },
+    {
+      "path": "references/visio.md",
+      "url": "source/senior-figtrans/references/visio.md",
+      "bytes": 10811,
+      "sha256": "3290b5958cc149468de79f31cf03ba0b69edaa678417cbc1aeb93c5ee697199a",
+      "type": "text"
+    },
+    {
+      "path": "scripts/audit_editability.py",
+      "url": "source/senior-figtrans/scripts/audit_editability.py",
+      "bytes": 22372,
+      "sha256": "d89443b69b5ec705c6fc1325dc720cfd6dfa619a23d5197dc6e81bfa5f98ed29",
+      "type": "python"
+    },
+    {
+      "path": "scripts/render_scene.ps1",
+      "url": "source/senior-figtrans/scripts/render_scene.ps1",
+      "bytes": 35869,
+      "sha256": "142f894947c2b8b7ef79475c2ff709d6fd66a60a01517321a8e80bbe5af5e519",
+      "type": "powershell"
+    },
+    {
+      "path": "scripts/start_visio_host.ps1",
+      "url": "source/senior-figtrans/scripts/start_visio_host.ps1",
+      "bytes": 3476,
+      "sha256": "c40b54400402dfffe11001b019931ebe2fa6dc19a675b2dfa7e3ba58233430ff",
+      "type": "powershell"
+    },
+    {
+      "path": "SKILL.md",
+      "url": "source/senior-figtrans/SKILL.md",
+      "bytes": 8404,
+      "sha256": "fb9ec8e725b3a90c36195a209833f9dbb3ced0a864d4310c3e864625ffb69e76",
+      "type": "text"
+    },
+    {
+      "path": "tests/test_audit_editability.py",
+      "url": "source/senior-figtrans/tests/test_audit_editability.py",
+      "bytes": 9902,
+      "sha256": "f2f089d7b893fbad86feb0d0072fe9f988c723c9a541b997971e36b7ef20fd18",
+      "type": "python"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "url": "source/senior-figtrans/THIRD_PARTY_NOTICES.md",
+      "bytes": 2750,
+      "sha256": "db10e1eef6f112b1b6df7874e0558d16630b73cb55b90cde8049adb1ebe4adcc",
+      "type": "text"
+    }
+  ]
+}
