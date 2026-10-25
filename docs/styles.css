@@ -44,3 +44,31 @@
     .workshop,.workshop:hover,.workshop:focus-within {transform:none!important}
   }
 }
+
+/* Reference-led demonstration: compact comparison, with the process video below. */
+@layer demo-example {
+  .video-play>span:last-child {padding:12px 16px;background:#151715ed;border:1px solid #ffffff24;border-radius:3px;color:#f3f1ea;box-shadow:0 3px 14px #0002}
+  .video-play small {color:#dce1d5}
+  .demo-comparison {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:0 0 25px}
+  .comparison-figure {min-width:0;margin:0;border:1px solid var(--line);background:#fff}
+  .comparison-figure figcaption {display:flex;align-items:center;gap:13px;min-height:46px;padding:9px 14px;border-bottom:1px solid var(--line);background:var(--paper)}
+  .comparison-figure figcaption>span {font:9px/1.5 var(--mono);letter-spacing:.06em;color:#58634c}
+  .comparison-figure figcaption>b {font-size:12px;font-weight:500;white-space:nowrap}
+  .comparison-figure figcaption>a {display:inline-flex;align-items:center;min-height:28px;margin-left:auto;font-size:10px;white-space:nowrap;border-bottom:1px solid transparent}
+  .comparison-figure figcaption>a:hover {border-bottom-color:currentColor}
+  .comparison-figure img {display:block;width:100%;height:auto;aspect-ratio:1834/786;object-fit:contain;background:#fff;padding:8px}
+  @media(max-width:800px) {
+    .demo-comparison {gap:14px;margin-bottom:20px}
+    .comparison-figure figcaption {gap:9px;padding-inline:10px;flex-wrap:wrap}
+    .comparison-figure figcaption>span {font-size:8px}
+    .comparison-figure figcaption>b {font-size:11px}
+  }
+  @media(max-width:560px) {
+    .demo-comparison {grid-template-columns:1fr;gap:15px;margin-bottom:22px}
+    .comparison-figure figcaption {min-height:46px;padding:3px 11px;gap:12px;flex-wrap:nowrap}
+    .comparison-figure figcaption>span {font-size:8px}
+    .comparison-figure figcaption>b {font-size:11px}
+    .comparison-figure figcaption>a {min-height:40px;font-size:10px}
+    .comparison-figure img {padding:6px}
+  }
+}

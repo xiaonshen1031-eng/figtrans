@@ -1,1 +1,3 @@
 17c86b74cf945efc91513f42ebbabb926e54a336a668d289dfa0e8fa313ab63b  figtrans-v1.1.0.zip
+f5c42c136bd1265b9e597fce7d5b2852236de3387a68559d536ec4983c591f2c  transformer-recreated.pptx
+f6956d426c4ce886ce8125a8fbf1adf535b2d787c51b4268d26f1d164d9367fa  transformer-recreated.vsdx

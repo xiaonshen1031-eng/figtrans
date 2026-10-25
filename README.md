@@ -13,7 +13,11 @@
 
 原生文字、形状、曲线和连接关系重建；支持 PPTX、Visio 或同时输出。
 包含局部排版/箭头修正、分组检查、保存重开与代表性编辑验收流程。
-演示使用原创示例，画面来自实际原生文件导出。
+网站示例使用用户提供的模型架构参考图，展示从参考图到可编辑对象的完整重建过程，实际绘制过程剪辑为 30 秒快放。
+
+- [参考图与重建结果对照、30 秒过程视频](https://xiaonshen1031-eng.github.io/figtrans/#demo)
+- [下载示例 PPTX](https://xiaonshen1031-eng.github.io/figtrans/downloads/transformer-recreated.pptx)
+- [下载示例 Visio](https://xiaonshen1031-eng.github.io/figtrans/downloads/transformer-recreated.vsdx)
 
 ## 使用
 
@@ -31,5 +35,6 @@
 ## 许可
 
 技能采用 [MIT](LICENSE) 许可。保留 [第三方声明](THIRD_PARTY_NOTICES.md)。
+MIT 许可适用于技能代码及本站原创实现。演示参考图由用户提供，参考图及其中内容保留各自权利。
 网站使用本地字体回退与同站托管资产，不依赖境外脚本或字体 CDN。
 免费托管与默认域名由 GitHub Pages 提供；各地网络可达性仍需按实际线路验证。
