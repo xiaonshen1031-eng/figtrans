@@ -1,6 +1,6 @@
 # Basic native scene helper
 
-`scripts/render_scene.ps1` is an optional Windows PowerShell 5.1 + desktop Office executor. It does not recognize an image. The agent analyzes the reference and supplies explicit objects. It creates separate native PPTX/VSDX documents, saves and reopens them, checks object names and connector attachment, and exports previews. Visual review remains required.
+`scripts/render_scene.ps1` is an optional Windows PowerShell 5.1 + desktop Office executor. The agent reads the reference and supplies explicit objects. The helper saves and reopens separate native PPTX/VSDX files. For each requested attached connector it compares both endpoints with the specified target shapes and records their names and IDs in `verified_connector_targets`. Inspect the exported previews for routing, arrowheads and spacing.
 
 ```powershell
 powershell -NoProfile -File scripts/render_scene.ps1 `
@@ -12,7 +12,7 @@ powershell -NoProfile -File scripts/render_scene.ps1 `
 
 ## Visio startup and recovery
 
-The helper first tries `GetActiveObject` to reuse a running Visio instance. Only the COM result meaning that no running instance is available triggers a cold startup. For that case, [start_visio_host.ps1](../scripts/start_visio_host.ps1) runs in a separate hidden Windows PowerShell 5.1 process and creates only the application and a uniquely titled task-owned blank guard. The drawing client waits for the worker to exit, then reattaches and verifies the recorded HWND and guard ID/title before drawing. Existing user documents are not closed.
+The helper first tries `GetActiveObject` to reuse a running Visio instance. Only the COM result meaning that no running instance is available triggers a cold startup. In that case [start_visio_host.ps1](../scripts/start_visio_host.ps1) runs in a separate hidden Windows PowerShell 5.1 process and creates the application and a uniquely titled task-owned blank guard. After the worker exits, the drawing client verifies the Windows process ID and the exact guard ID and title. Both window handles are recorded so a change in the startup window can be distinguished from a change of process.
 
 The startup-worker wait is bounded to 20 seconds. The main `<name>_render_receipt.json` records the worker PID and receipt path; `<name>_visio_host.json` records startup stages, worker and Visio PIDs, HWND, guard identity and any error. On timeout the worker may still be running: inspect its process and both receipts. The helper does not automatically kill or restart either process. This bound does not interrupt subsequent COM calls that never return.
 

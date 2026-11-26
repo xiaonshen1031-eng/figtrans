@@ -17,6 +17,8 @@ The source is saved, closed, reopened, checked and exported to PNG. Only documen
 created by this invocation are closed. No application-wide Quit is performed.
 Visio reuses a running instance when available. A cold start is initialized by a
 separate Windows PowerShell 5.1 worker, then reattached after that worker exits.
+Reattachment requires the worker's Windows PID and exact guard identity; HWNDs
+are recorded separately because the application's window can change at startup.
 Only uniquely identified task-owned guards and the new task document are closed.
 An additional guard is created only when needed to avoid a zero-document UI
 transition between saving and reopening. Existing documents are never closed.
@@ -93,24 +95,75 @@ function Invoke-ComCall([string]$StageName, [scriptblock]$Operation) {
         }
     }
 }
+function Get-WindowIdentity([long]$WindowHandle) {
+    if($WindowHandle -eq 0) { throw 'The application did not expose a nonzero HWND.' }
+    if(-not ('SeniorFigTrans.NativeWindow' -as [type])) {
+        Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; namespace SeniorFigTrans { public static class NativeWindow { [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid); } }'
+    }
+    [uint32]$ownerPid=0
+    $threadId=[SeniorFigTrans.NativeWindow]::GetWindowThreadProcessId([IntPtr]$WindowHandle,[ref]$ownerPid)
+    if($threadId -eq 0 -or $ownerPid -eq 0) { throw 'Cannot identify the Windows process for the application HWND.' }
+    return [pscustomobject]@{hwnd=$WindowHandle;windows_pid=[long]$ownerPid}
+}
+function Assert-VisioHostIdentity($Expected, $Observed) {
+    if([long]$Expected.windows_pid -le 0 -or [long]$Observed.windows_pid -le 0 -or [long]$Observed.hwnd -eq 0) {
+        throw 'Visio startup ownership requires a nonzero observed HWND and verified Windows process IDs.'
+    }
+    if([long]$Observed.windows_pid -ne [long]$Expected.windows_pid) {
+        throw "GetActiveObject selected a different Visio Windows PID (expected $($Expected.windows_pid), observed $($Observed.windows_pid))."
+    }
+}
+function Assert-VisioStartupGuard($Guard, $Receipt, [string]$Token) {
+    if([int]$Guard.ID -ne [int]$Receipt.guard_document_id -or [string]$Guard.Title -cne [string]$Receipt.guard_title -or [string]$Receipt.guard_title -cne ('Senior-FigTrans startup guard '+$Token)) {
+        throw 'Startup guard ID/title validation failed. The document will not be closed.'
+    }
+}
 function Record-AppIdentity($Application, [string]$Format) {
     Stage 'read_application_identity'
     try {
-        if(-not ('SeniorFigTrans.NativeWindow' -as [type])) {
-            Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; namespace SeniorFigTrans { public static class NativeWindow { [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid); } }'
-        }
         if($Format -eq 'vsdx') {
             $script:CurrentEntry.application.visio_instance_id=[long]$Application.ProcessID
             $hwnd=[long]$Application.WindowHandle32
         } else { $hwnd=[long]$Application.HWND }
         $script:CurrentEntry.application.hwnd=$hwnd
-        [uint32]$applicationPid=0
-        $threadId=[SeniorFigTrans.NativeWindow]::GetWindowThreadProcessId([IntPtr]$hwnd,[ref]$applicationPid)
-        if($threadId -ne 0) { $script:CurrentEntry.application.windows_pid=$applicationPid }
+        $identity=Get-WindowIdentity $hwnd
+        $script:CurrentEntry.application.windows_pid=$identity.windows_pid
     } catch {
         $script:CurrentEntry.application.identity_warning=$_.Exception.Message
     }
     Flush-Receipt
+}
+function P-ConnectorTargets($Shape, $ExpectedBegin, $ExpectedEnd) {
+    $connector=$Shape.ConnectorFormat
+    if($connector.BeginConnected -ne -1 -or $connector.EndConnected -ne -1) {
+        throw "Detached connector after reopening: $($Shape.Name)"
+    }
+    $begin=$connector.BeginConnectedShape; $end=$connector.EndConnectedShape
+    if([long]$begin.ID -ne [long]$ExpectedBegin.ID -or [long]$end.ID -ne [long]$ExpectedEnd.ID) {
+        throw "Connector target changed after reopening: $($Shape.Name)"
+    }
+    return [ordered]@{connector=[string]$Shape.Name;begin=[string]$begin.Name;end=[string]$end.Name;
+                     begin_shape_id=[long]$begin.ID;end_shape_id=[long]$end.ID}
+}
+function V-ConnectorTargets($Shape, $ExpectedBegin, $ExpectedEnd) {
+    $targets=@{}
+    for($i=1;$i -le $Shape.Connects.Count;$i++) {
+        $connection=$Shape.Connects.Item($i)
+        $endpoint=[string]$connection.FromCell.Name
+        if($endpoint -notin @('BeginX','EndX')) { continue }
+        if([long]$connection.FromSheet.ID -ne [long]$Shape.ID -or $targets.ContainsKey($endpoint)) {
+            throw "Ambiguous connector endpoint after reopening: $($Shape.NameU) $endpoint"
+        }
+        $targets[$endpoint]=$connection.ToSheet
+    }
+    if(-not $targets.ContainsKey('BeginX') -or -not $targets.ContainsKey('EndX')) {
+        throw "Detached connector after reopening: $($Shape.NameU)"
+    }
+    if([long]$targets.BeginX.ID -ne [long]$ExpectedBegin.ID -or [long]$targets.EndX.ID -ne [long]$ExpectedEnd.ID) {
+        throw "Connector target changed after reopening: $($Shape.NameU)"
+    }
+    return [ordered]@{connector=[string]$Shape.NameU;begin=[string]$targets.BeginX.NameU;end=[string]$targets.EndX.NameU;
+                     begin_shape_id=[long]$targets.BeginX.ID;end_shape_id=[long]$targets.EndX.ID}
 }
 function Failed-Target($ErrorRecord) {
     $script:CurrentEntry.status='failed'
@@ -327,7 +380,7 @@ if($Target -in @('pptx','both')) {
     $app=$null; $doc=$null; $reopened=$null
     $file=Join-Path $OutputDir ($name+'.pptx')
     $png=Join-Path $OutputDir ($name+'_pptx.png')
-    $script:CurrentEntry=[ordered]@{format='pptx';status='running';path=$file;preview=$png;current_stage='pending';stage_history=(New-Object System.Collections.ArrayList);com_retries=(New-Object System.Collections.ArrayList);cleanup_errors=(New-Object System.Collections.ArrayList);application=[ordered]@{windows_pid=$null;hwnd=$null;identity_warning=$null};error=$null;saved_reopened=$false;native_objects=$null;scene_objects=$spec.Count;canvas_background_objects=0;canvas_background_id=$null;attached_connectors=$null;renderer='Microsoft PowerPoint';visual_review='pending'}
+    $script:CurrentEntry=[ordered]@{format='pptx';status='running';path=$file;preview=$png;current_stage='pending';stage_history=(New-Object System.Collections.ArrayList);com_retries=(New-Object System.Collections.ArrayList);cleanup_errors=(New-Object System.Collections.ArrayList);application=[ordered]@{windows_pid=$null;hwnd=$null;identity_warning=$null};error=$null;saved_reopened=$false;native_objects=$null;scene_objects=$spec.Count;canvas_background_objects=0;canvas_background_id=$null;attached_connectors=$null;verified_connector_targets=(New-Object System.Collections.ArrayList);renderer='Microsoft PowerPoint';visual_review='pending'}
     $null=$results.Add($script:CurrentEntry); Flush-Receipt
     try {
         $app=Invoke-ComCall 'create_application' { New-Object -ComObject PowerPoint.Application }
@@ -381,7 +434,8 @@ if($Target -in @('pptx','both')) {
         foreach($obj in $scene.objects) {
             $shape=$check.Shapes.Item([string]$obj.id)
             if($obj.type -eq 'connector') {
-                if($shape.ConnectorFormat.BeginConnected -ne -1 -or $shape.ConnectorFormat.EndConnected -ne -1) { throw "Detached connector after reopening: $($obj.id)" }
+                $targetEvidence=P-ConnectorTargets $shape ($check.Shapes.Item([string]$obj.from)) ($check.Shapes.Item([string]$obj.to))
+                $null=$script:CurrentEntry.verified_connector_targets.Add($targetEvidence)
                 $attached++
             }
         }
@@ -402,10 +456,10 @@ if($Target -in @('pptx','both')) {
     }
 }
 if($Target -in @('visio','both')) {
-    $app=$null; $doc=$null; $reopened=$null; $guardDocument=$null
+    $app=$null; $doc=$null; $reopened=$null; $guardDocument=$null; $hostState=$null
     $file=Join-Path $OutputDir ($name+'.vsdx')
     $png=Join-Path $OutputDir ($name+'_vsdx.png')
-    $script:CurrentEntry=[ordered]@{format='vsdx';status='running';path=$file;preview=$png;current_stage='pending';stage_history=(New-Object System.Collections.ArrayList);com_retries=(New-Object System.Collections.ArrayList);cleanup_errors=(New-Object System.Collections.ArrayList);application=[ordered]@{windows_pid=$null;hwnd=$null;visio_instance_id=$null;identity_warning=$null;reused_existing_instance=$null;initial_document_count=$null;startup_worker_pid=$null;startup_worker_receipt=$null;startup_worker_state='not_needed'};guard=[ordered]@{created=$false;closed=$false;document_id=$null;title=$null;origin=$null};error=$null;saved_reopened=$false;native_objects=$null;scene_objects=$spec.Count;canvas_background_objects=0;canvas_background_id=$CanvasBackgroundId;attached_connectors=$null;renderer='Microsoft Visio';visual_review='pending'}
+    $script:CurrentEntry=[ordered]@{format='vsdx';status='running';path=$file;preview=$png;current_stage='pending';stage_history=(New-Object System.Collections.ArrayList);com_retries=(New-Object System.Collections.ArrayList);cleanup_errors=(New-Object System.Collections.ArrayList);application=[ordered]@{windows_pid=$null;hwnd=$null;visio_instance_id=$null;identity_warning=$null;reused_existing_instance=$null;initial_document_count=$null;startup_worker_pid=$null;startup_worker_receipt=$null;startup_worker_state='not_needed';startup_identity=$null};guard=[ordered]@{created=$false;closed=$false;document_id=$null;title=$null;origin=$null};error=$null;saved_reopened=$false;native_objects=$null;scene_objects=$spec.Count;canvas_background_objects=0;canvas_background_id=$CanvasBackgroundId;attached_connectors=$null;verified_connector_targets=(New-Object System.Collections.ArrayList);renderer='Microsoft Visio';visual_review='pending'}
     $null=$results.Add($script:CurrentEntry); Flush-Receipt
     try {
         try {
@@ -449,10 +503,18 @@ if($Target -in @('visio','both')) {
             if($hostState.status -ne 'ready' -or $hostState.guard_token -cne $guardToken) { throw 'Visio startup receipt is not ready or has the wrong guard token.' }
             $script:CurrentEntry.application.startup_worker_state='ready'
             $app=Invoke-ComCall 'reattach_initialized_visio' { [Runtime.InteropServices.Marshal]::GetActiveObject('Visio.Application') }
-            $attachedHwnd=Invoke-ComCall 'verify_initialized_visio_hwnd' { [long]$app.WindowHandle32 }
-            if($attachedHwnd -ne [long]$hostState.hwnd) { throw 'GetActiveObject selected a different Visio HWND. No document in that instance will be changed.' }
+        }
+        Record-AppIdentity $app 'vsdx'
+        if($null -ne $hostState) {
+            $observed=$script:CurrentEntry.application
+            $script:CurrentEntry.application.startup_identity=[ordered]@{
+                expected_hwnd=[long]$hostState.hwnd;observed_hwnd=$observed.hwnd
+                expected_windows_pid=[long]$hostState.windows_pid;observed_windows_pid=$observed.windows_pid
+            }
+            Stage 'verify_initialized_visio_identity'
+            Assert-VisioHostIdentity $hostState $observed
             $candidateGuard=Invoke-ComCall 'locate_owned_startup_guard' { $app.Documents.ItemFromID([int]$hostState.guard_document_id) }
-            if([string]$candidateGuard.Title -cne [string]$hostState.guard_title -or [string]$hostState.guard_title -cne ('Senior-FigTrans startup guard '+$guardToken)) { throw 'Startup guard ID/title validation failed. The document will not be closed.' }
+            Assert-VisioStartupGuard $candidateGuard $hostState $guardToken
             $guardDocument=$candidateGuard
             $script:CurrentEntry.guard.created=$true
             $script:CurrentEntry.guard.document_id=[int]$hostState.guard_document_id
@@ -460,7 +522,6 @@ if($Target -in @('visio','both')) {
             $script:CurrentEntry.guard.origin='isolated_startup_worker'
             Stage 'owned_startup_guard_verified'
         }
-        Record-AppIdentity $app 'vsdx'
         $script:CurrentEntry.application.initial_document_count=Invoke-ComCall 'inspect_existing_document_count' { $app.Documents.Count }
         $doc=Invoke-ComCall 'create_document' { $app.Documents.Add('') }
         Stage 'configure_canvas'
@@ -538,7 +599,8 @@ if($Target -in @('visio','both')) {
         foreach($obj in $scene.objects) {
             $shape=$check.Shapes.ItemU([string]$obj.id)
             if($obj.type -eq 'connector') {
-                if($shape.Connects.Count -lt 2) { throw "Detached connector after reopening: $($obj.id)" }
+                $targetEvidence=V-ConnectorTargets $shape ($check.Shapes.ItemU([string]$obj.from)) ($check.Shapes.ItemU([string]$obj.to))
+                $null=$script:CurrentEntry.verified_connector_targets.Add($targetEvidence)
                 $attached++
             }
         }

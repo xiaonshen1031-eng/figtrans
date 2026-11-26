@@ -1,10 +1,10 @@
 # 安装 FigTrans
 
-FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.2.0**。代码与文档以 MIT 许可证开源。
+FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.3.0**。代码与文档以 MIT 许可证开源。
 
 ## 1. 下载并放入技能目录
 
-下载 `figtrans-v1.2.0.zip`，解压后保留完整的 `senior-figtrans` 文件夹，将其放入你自己的 Codex 技能目录：
+下载 `figtrans-v1.3.0.zip`，解压后保留完整的 `senior-figtrans` 文件夹，将其放入你自己的 Codex 技能目录：
 
 - Windows：`%USERPROFILE%\.codex\skills\senior-figtrans`
 - macOS / Linux：`~/.codex/skills/senior-figtrans`
@@ -22,6 +22,8 @@ FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.2.0**。�
 - **MathType**：如明确要求 MathType 公式对象，需要本机具备相应的编辑和嵌入能力。
 
 ## 3. 给出参考图和目标格式
+
+**Codex 建议**　多面板图、密集连线或公式重建，模型选择器提供时优先使用 **Sol**，推理强度选 **Ultra**。
 
 示例请求：
 

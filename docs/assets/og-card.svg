@@ -11,11 +11,13 @@
   <rect width="1200" height="630" fill="url(#background)"/>
   <rect width="1200" height="630" fill="url(#grid)"/>
   <text x="66" y="108" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="4">FIGTRANS</text>
-  <g font-family="Microsoft YaHei UI,Microsoft YaHei,sans-serif" font-size="58" font-weight="700">
-    <text x="64" y="239" fill="white">重建科研插图</text>
-    <text x="64" y="324" fill="#e3eccd">保留可编辑对象</text>
+  <g font-family="Segoe UI,Arial,sans-serif" font-size="103" font-weight="680">
+    <text x="64" y="243" fill="white">Figures,</text>
+    <path d="M239 355H443" stroke="#dbff4f" stroke-width="12"/>
+    <text x="64" y="351" fill="#e3eccd">set <tspan font-family="Georgia,serif" font-style="italic">free.</tspan></text>
   </g>
-  <text x="66" y="405" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="24">PowerPoint PPTX / Visio VSDX</text>
+  <text x="66" y="428" fill="#e3eccd" font-family="Microsoft YaHei UI,Microsoft YaHei,sans-serif" font-size="26">把科研插图重建成可编辑对象</text>
+  <text x="66" y="465" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="18">PowerPoint PPTX / Visio VSDX</text>
   <rect x="638" y="122" width="494" height="384" rx="22" fill="#fafbf5" stroke="#aab99c"/>
   <text x="668" y="181" fill="#253226" font-family="Microsoft YaHei UI,Microsoft YaHei,sans-serif" font-size="25" font-weight="700">原生对象和附着连接</text>
   <g stroke="#324b32" stroke-width="2.5">

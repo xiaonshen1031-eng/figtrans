@@ -1,12 +1,12 @@
 {
   "name": "Senior-FigTrans",
   "display_name": "FigTrans",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "license": "MIT",
   "author": "XiaoN",
   "copyright": "NCEPU-Senior",
   "base_url": "source/senior-figtrans/",
-  "file_count": 14,
+  "file_count": 15,
   "files": [
     {
       "path": "agents/openai.yaml",
@@ -46,57 +46,64 @@
     {
       "path": "references/quality-and-repair.md",
       "url": "source/senior-figtrans/references/quality-and-repair.md",
-      "bytes": 6628,
-      "sha256": "37c30a379a02db66a725b39800b0a87c05f6486c24f885899db55fcff240c81b",
+      "bytes": 12488,
+      "sha256": "29cf8a72abb60b62dcb6ee277a3256a5e7cac6f4706bc6a3f397d385e1ce871f",
       "type": "text"
     },
     {
       "path": "references/scene-helper.md",
       "url": "source/senior-figtrans/references/scene-helper.md",
-      "bytes": 7500,
-      "sha256": "5d5714d64428cbc4e32df0212f45c4d4aad72ec97aad5a5aaa055e40382021d3",
+      "bytes": 7630,
+      "sha256": "53f2a1b131119a62c21c6ffddf1692928c1922f52dabb7ea3883adeb2c8195de",
       "type": "text"
     },
     {
       "path": "references/visio.md",
       "url": "source/senior-figtrans/references/visio.md",
-      "bytes": 10811,
-      "sha256": "3290b5958cc149468de79f31cf03ba0b69edaa678417cbc1aeb93c5ee697199a",
+      "bytes": 10456,
+      "sha256": "ba52764ee7e3e4dc5407aca0022b4b8edc3bb4fbe291a2928887aa7dc7625ef9",
       "type": "text"
     },
     {
       "path": "scripts/audit_editability.py",
       "url": "source/senior-figtrans/scripts/audit_editability.py",
-      "bytes": 24867,
-      "sha256": "67f22e38503a4edb2b5edf92c9abf09b340acc320feb03513c00968654d03568",
+      "bytes": 26628,
+      "sha256": "ab14d401bb3c4d528617e1074c77096d1b11b9210e511e670d958fbd6ec7e5b7",
       "type": "python"
     },
     {
       "path": "scripts/render_scene.ps1",
       "url": "source/senior-figtrans/scripts/render_scene.ps1",
-      "bytes": 35869,
-      "sha256": "142f894947c2b8b7ef79475c2ff709d6fd66a60a01517321a8e80bbe5af5e519",
+      "bytes": 39459,
+      "sha256": "ab3bf16fc610a7f894df76a0170cadcbebfb3ddacd48e3f5dc027390f2164ff5",
       "type": "powershell"
     },
     {
       "path": "scripts/start_visio_host.ps1",
       "url": "source/senior-figtrans/scripts/start_visio_host.ps1",
-      "bytes": 3476,
-      "sha256": "c40b54400402dfffe11001b019931ebe2fa6dc19a675b2dfa7e3ba58233430ff",
+      "bytes": 3960,
+      "sha256": "46707e14abad188dbce53ac8068eb1cec4f0d68d291910c31788b7e59576ee8b",
       "type": "powershell"
     },
     {
       "path": "SKILL.md",
       "url": "source/senior-figtrans/SKILL.md",
-      "bytes": 8795,
-      "sha256": "e8543b76a88970d0560c1468c17957d1f647b2526f58ddeb7887967baf43d420",
+      "bytes": 9188,
+      "sha256": "0e25c1ad1bbefa7e43dcc80643f426926d22f2b09b9b0aadeceeee07b14732a1",
       "type": "text"
     },
     {
       "path": "tests/test_audit_editability.py",
       "url": "source/senior-figtrans/tests/test_audit_editability.py",
-      "bytes": 14342,
-      "sha256": "5736c0c539117863ce11a065c65924476cc71dcb13f9fb3fdc1ad3d691c4579c",
+      "bytes": 16499,
+      "sha256": "c3e3d79620c12d32c6c9f69fb6b5c64c767d5666196844027b783381f95b685a",
+      "type": "python"
+    },
+    {
+      "path": "tests/test_scene_roundtrip.py",
+      "url": "source/senior-figtrans/tests/test_scene_roundtrip.py",
+      "bytes": 4583,
+      "sha256": "d389f74ff6f9f1a51778b10c4df211dd77271318fa921d9ef4be5871b45595b0",
       "type": "python"
     },
     {

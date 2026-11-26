@@ -4,7 +4,11 @@ Copyright (c) 2026 NCEPU-Senior
 Author: XiaoN
 """
 import importlib.util
+import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from zipfile import ZipFile
@@ -89,6 +93,43 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(result["pages"][0]["connections"][0]["attachments"][1]["shape_id"], "3")
         self.assertEqual([t["text"] for t in result["pages"][0]["readable_text"]], ["Input", "Output"])
         self.assertTrue(result["requires_visual_review"])
+
+    def test_required_label_preserves_case_and_checks_occurrences(self):
+        path = self.folder / "model-label.pptx"
+        ppt(path, rectangle("2", "model", "iTransformer") + rectangle("3", "baseline", "Transformer"))
+        result = MOD.audit(path, required_labels=["iTransformer", "iTransformer", "itransformer"])
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual(result["required_label_check"], [
+            {"label": "iTransformer", "expected_at_least": 2, "found": 1},
+            {"label": "itransformer", "expected_at_least": 1, "found": 0},
+        ])
+
+    def test_required_label_normalizes_powerpoint_line_break_not_style_runs(self):
+        path = self.folder / "layout-label.pptx"
+        shape = rectangle("2", "attention", "Multivariate")
+        shape = shape.replace("<a:t>Multivariate</a:t></a:r>",
+                              "<a:t>Multi</a:t></a:r><a:r><a:t>variate</a:t></a:r>"
+                              "<a:br/><a:r><a:t>Attention</a:t></a:r>")
+        ppt(path, shape)
+        result = MOD.audit(path, required_labels=["Multivariate Attention"])
+        self.assertFalse(result["hard_failures"])
+
+    def test_required_label_uses_native_visio_text_with_character_ranges(self):
+        path = self.folder / "layout-label.vsdx"
+        visio(path, '<Shape ID="2" NameU="attention"><Text><cp IX="0"/>Multi'
+                    '<cp IX="1"/>variate\nAttention</Text></Shape>')
+        result = MOD.audit(path, required_labels=["Multivariate Attention"])
+        self.assertFalse(result["hard_failures"])
+
+    def test_legacy_console_writes_valid_json_with_combining_marks(self):
+        path = self.folder / "formula.pptx"
+        text = "x\u0302 ="
+        ppt(path, rectangle("2", "formula", text))
+        command = subprocess.run([sys.executable, str(SCRIPT), str(path)],
+                                 env={**os.environ, "PYTHONIOENCODING": "cp936"},
+                                 capture_output=True, check=True)
+        result = json.loads(command.stdout)
+        self.assertEqual(result["pages"][0]["readable_text"][0]["text"], text)
 
     def test_missing_relationship_target_is_failure(self):
         path = self.folder / "broken.pptx"

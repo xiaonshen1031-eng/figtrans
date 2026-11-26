@@ -2,7 +2,7 @@
 
 const find = selector => document.querySelector(selector);
 const all = selector => Array.from(document.querySelectorAll(selector));
-const revision = '?v=120';
+const revision = '?v=130';
 
 const toast = find('#toast');
 let toastTimer;

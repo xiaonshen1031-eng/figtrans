@@ -5,7 +5,7 @@ Initialize one Visio instance in an isolated Windows PowerShell 5.1 process.
 .DESCRIPTION
 Creates only an application and a uniquely titled, task-owned blank document.
 It never opens a file, closes existing documents, or calls Application.Quit.
-The caller must wait for exit 0, verify the recorded HWND and guard ID/title,
+The caller must wait for exit 0, verify the recorded Windows PID and guard ID/title,
 then reconnect to the running instance and close only that guard when finished.
 The receipt is updated before each COM stage. A timeout does not establish that
 this worker stopped: callers must retain its process handle and must not restart
@@ -25,7 +25,7 @@ if(-not (Test-Path -LiteralPath ([IO.Path]::GetDirectoryName($ReceiptPath)) -Pat
 $state=[ordered]@{
     status='starting';stage='initialize';worker_pid=$PID;guard_token=$GuardToken
     guard_title=('Senior-FigTrans startup guard '+$GuardToken)
-    guard_document_id=$null;hwnd=$null;windows_pid=$null;error=$null
+    guard_document_id=$null;hwnd=$null;initial_hwnd=$null;windows_pid=$null;error=$null
     started_utc=[DateTime]::UtcNow.ToString('o');updated_utc=$null
 }
 function Write-State([string]$StageName) {
@@ -39,6 +39,7 @@ try {
     $hostApp=New-Object -ComObject Visio.Application
     Write-State 'read_application_identity'
     $state.hwnd=[long]$hostApp.WindowHandle32
+    $state.initial_hwnd=$state.hwnd
     if($state.hwnd -eq 0) { throw 'Visio did not expose a nonzero application HWND.' }
     Add-Type -TypeDefinition 'using System; using System.Runtime.InteropServices; namespace SeniorFigTransBootstrap { public static class Window { [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint pid); } }'
     [uint32]$nativePid=0
@@ -51,6 +52,13 @@ try {
     Write-State 'title_startup_guard'
     $startupGuard.Title=[string]$state.guard_title
     if([string]$startupGuard.Title -cne [string]$state.guard_title) { throw 'Startup guard title verification failed.' }
+    Write-State 'read_ready_application_identity'
+    $state.hwnd=[long]$hostApp.WindowHandle32
+    [uint32]$readyPid=0
+    $threadId=[SeniorFigTransBootstrap.Window]::GetWindowThreadProcessId([IntPtr]$state.hwnd,[ref]$readyPid)
+    if($state.hwnd -eq 0 -or $threadId -eq 0 -or $readyPid -ne $state.windows_pid) {
+        throw 'Cannot verify the initialized Visio window in the originally created Windows process.'
+    }
     $state.status='ready'
     Write-State 'ready_for_reattachment'
     # Deliberately leave the application and blank guard alive. The caller owns

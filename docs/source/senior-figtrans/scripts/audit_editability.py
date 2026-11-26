@@ -156,6 +156,21 @@ def coverage(bounds, width, height):
     return round(overlap_w * overlap_h / (width * height), 6)
 
 
+def drawing_label(element):
+    paragraphs = element.findall(".//a:p", NS)
+    if not paragraphs:
+        return "".join(node.text or "" for node in element.findall(".//a:t", NS))
+    text_tag = f"{{{NS['a']}}}t"
+    break_tag = f"{{{NS['a']}}}br"
+    return "\n".join("".join("\n" if node.tag == break_tag else node.text or ""
+                            for node in paragraph.iter() if node.tag in (text_tag, break_tag))
+                     for paragraph in paragraphs)
+
+
+def normalize_label(text):
+    return " ".join(text.split())
+
+
 def pptx_inventory(archive, names, by_source, failures):
     presentation = xml_part(archive, "ppt/presentation.xml")
     size = presentation.find("p:sldSz", NS)
@@ -183,8 +198,7 @@ def pptx_inventory(archive, names, by_source, failures):
                     items.append(item)
                     walk(element, ancestor_groups + (identity.get("id"),))
                     continue
-                label = "".join(
-                    e.text or "" for e in element.findall(".//a:t", NS))
+                label = drawing_label(element)
                 if label:
                     item["text"] = label
                     texts.append({**identity, "text": label})
@@ -381,7 +395,7 @@ def visio_inventory(archive, names, by_source, failures):
     return {"pages": pages}
 
 
-def audit(path, require_native=False):
+def audit(path, require_native=False, required_labels=()):
     path = Path(path).resolve()
     suffix = path.suffix.lower()
     if suffix not in {".pptx", ".vsdx"}:
@@ -437,6 +451,18 @@ def audit(path, require_native=False):
                                            "action": "Inspect whether reference artwork was flattened; valid backgrounds require justification."})
         if not result["pages"]:
             result["hard_failures"].append({"code": "no_pages_found"})
+        if required_labels:
+            observed = Counter(normalize_label(item["text"])
+                               for page in result["pages"] for item in page["readable_text"])
+            expected = Counter(normalize_label(label) for label in required_labels)
+            result["required_label_check"] = [
+                {"label": label, "expected_at_least": count, "found": observed[label]}
+                for label, count in expected.items()
+            ]
+            result["hard_failures"].extend(
+                {"code": "missing_required_label", **entry}
+                for entry in result["required_label_check"] if entry["found"] < entry["expected_at_least"]
+            )
         result["totals"] = dict(totals)
         result["status"] = "FAIL" if result["hard_failures"] else "STRUCTURE_PASS_REVIEW_REQUIRED"
     return result
@@ -448,9 +474,13 @@ def main(argv=None):
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-native", action="store_true",
                         help="Fail a page with no native diagram geometry, connectors, table/chart, or OMML evidence.")
+    parser.add_argument("--require-label", action="append", default=[],
+                        help="Require a full editable label (case-sensitive, whitespace normalized). Repeat for additional labels or repeated occurrences.")
     args = parser.parse_args(argv)
+    if any(not normalize_label(label) for label in args.require_label):
+        parser.error("--require-label expects nonempty text")
     try:
-        result = audit(args.file, args.require_native)
+        result = audit(args.file, args.require_native, args.require_label)
         code = int(bool(result["hard_failures"]))
     except (OSError, BadZipFile, ET.ParseError, ValueError, KeyError) as exc:
         result = {"file": str(args.file.resolve()), "status": "ERROR", "requires_visual_review": True,
@@ -460,7 +490,11 @@ def main(argv=None):
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(serialized + "\n", encoding="utf-8")
-    print(serialized)
+    try:
+        print(serialized)
+    except UnicodeEncodeError:
+        # Windows legacy consoles may not encode mathematical combining marks.
+        print(json.dumps(result, ensure_ascii=True, indent=2))
     return code
 
 
