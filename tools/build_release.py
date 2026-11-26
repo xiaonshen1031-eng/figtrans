@@ -24,7 +24,7 @@ MIRROR = f"source/{SKILL}/"
 INDEX = "source/index.json"
 MANIFEST = "downloads/release.json"
 SUMS = "downloads/SHA256SUMS.txt"
-DEMO = ("transformer-recreated.pptx", "transformer-recreated.vsdx")
+DEMO = ("transformer-recreated.pptx", "transformer-recreated.vsdx", "pid-recreated.pptx")
 LEGACY_ARCHIVE = "figtrans-v1.1.0.zip"
 LEGACY_SHA256 = "17c86b74cf945efc91513f42ebbabb926e54a336a668d289dfa0e8fa313ab63b"
 ARCHIVE_NAME = re.compile(r"figtrans-v\d+\.\d+\.\d+\.zip")
@@ -165,7 +165,8 @@ def plan_release(root):
 
     manifest = read_json(docs / MANIFEST)
     manifest.update(version=version, download_url=archive_url, bytes=len(archive_data),
-                    sha256=sha256(archive_data), file_count=len(files))
+                    sha256=sha256(archive_data), file_count=len(files),
+                    demo_downloads=[f"downloads/{name}" for name in DEMO])
     index = read_json(docs / INDEX)
     index.update(version=version, base_url=MIRROR, file_count=len(files), files=[
         {"path": name, "url": MIRROR + name, "bytes": len(data), "sha256": sha256(data),

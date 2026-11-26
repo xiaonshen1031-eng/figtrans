@@ -43,5 +43,10 @@
     "credentials": false,
     "private_paper_assets": false,
     "installed_source_modified": false
-  }
+  },
+  "demo_downloads": [
+    "downloads/transformer-recreated.pptx",
+    "downloads/transformer-recreated.vsdx",
+    "downloads/pid-recreated.pptx"
+  ]
 }

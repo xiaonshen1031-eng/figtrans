@@ -101,6 +101,13 @@ section[id], details[id] { scroll-margin-top: 12px; }
 .section-heading { display: grid; grid-template-columns: 1.2fr .8fr; align-items: end; gap: 16px 40px; margin-bottom: 24px; }
 .section-heading h2, .start-copy h2 { margin-top: 4px; font-size: clamp(29px, 4vw, 53px); line-height: 1.22; letter-spacing: -.06em; }
 .section-heading > p { color: var(--muted); max-width: 40ch; }
+.example-tabs { display: flex; width: fit-content; max-width: 100%; gap: 4px; margin-block: 10px 18px; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: #f1f4e9; }
+.example-tabs button { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 44px; padding: 6px 12px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--forest); font-size: 14px; font-weight: 670; }
+.example-tabs button:hover { background: #e4ebd5; }
+.example-tabs button[aria-selected="true"] { background: var(--forest); color: #fff; }
+.example-tabs button small { font: 650 10px var(--mono); white-space: nowrap; }
+.example-tabs button[aria-selected="true"] small { color: #e3eccd; }
+.example-tabs button:focus-visible, .demo-panel:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .comparison { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .comparison-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 16px; background: #e9f0db; border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 650; }
 .comparison-bar span { display: inline-flex; align-items: center; gap: 7px; }
@@ -108,6 +115,7 @@ section[id], details[id] { scroll-margin-top: 12px; }
 .comparison-bar i { width: 8px; height: 8px; border-radius: 50%; background: #647859; }
 .comparison-bar span:last-child i { background: var(--green); }
 .compare-stage { --split: 50%; position: relative; aspect-ratio: 7 / 3; background: #fff; }
+.pid-compare-stage { max-width: 1030px; margin-inline: auto; aspect-ratio: 3 / 2; overflow: hidden; }
 .compare-stage.is-interactive { cursor: ew-resize; touch-action: pan-y; }
 .compare-stage img { position: absolute; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .compare-reference { clip-path: inset(0 calc(100% - var(--split)) 0 0); }
@@ -128,6 +136,7 @@ section[id], details[id] { scroll-margin-top: 12px; }
 .proof dt { font-size: 13px; }
 .proof dd { order: -1; font-size: 24px; font-weight: 750; font-variant-numeric: tabular-nums; }
 .demo-downloads { display: flex; flex-wrap: wrap; gap: 8px; }
+.pid-delivery p { color: var(--muted); font-size: 14px; }
 .timelapse { margin-top: 20px; border-block: 1px solid var(--line); }
 .timelapse summary { display: flex; justify-content: space-between; align-items: center; padding: 11px 3px; cursor: pointer; font-weight: 680; color: var(--forest); }
 .timelapse summary::-webkit-details-marker { display: none; }
@@ -194,6 +203,8 @@ section[id], details[id] { scroll-margin-top: 12px; }
   .hero-actions .text-link { font-size: 13px; }
   .workshop-head, .workshop-foot { padding: 8px 9px; }
   .section-heading { gap: 5px; margin-bottom: 14px; }
+  .example-tabs { width: 100%; margin-bottom: 14px; }
+  .example-tabs button { flex: 1 1 0; flex-direction: column; gap: 1px; min-width: 0; padding-inline: 6px; }
   .comparison-actions { padding-inline: 9px; }
   .comparison-bar { padding-inline: 7px; }
   .comparison-bar span { gap: 4px; }

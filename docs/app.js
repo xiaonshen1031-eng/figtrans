@@ -2,7 +2,7 @@
 
 const find = selector => document.querySelector(selector);
 const all = selector => Array.from(document.querySelectorAll(selector));
-const revision = '?v=130';
+const revision = '?v=130-gallery';
 
 const toast = find('#toast');
 let toastTimer;
@@ -79,37 +79,86 @@ formatButtons.forEach(button => button.addEventListener('click', () => {
 }));
 drawNode();
 
-const comparison = find('#compare-stage');
-const slider = find('#comparison-split');
-function setSplit(raw) {
-  const split = Math.round(Math.min(100, Math.max(0, raw)));
-  comparison.style.setProperty('--split', split + '%');
-  slider.value = String(split);
-  slider.setAttribute('aria-valuetext', '参考图占画面 ' + split + '%');
-}
-slider.addEventListener('input', () => setSplit(Number(slider.value)));
-comparison.classList.add('is-interactive');
-function pointerSplit(event) {
-  const frame = comparison.getBoundingClientRect();
-  if (frame.width) setSplit((event.clientX - frame.left) / frame.width * 100);
-}
-comparison.addEventListener('pointerdown', event => {
-  if (!event.isPrimary || event.button !== 0) return;
-  comparison.setPointerCapture(event.pointerId);
-  pointerSplit(event);
-});
-comparison.addEventListener('pointermove', event => {
-  if (comparison.hasPointerCapture(event.pointerId)) pointerSplit(event);
+all('.comparison').forEach(figure => {
+  const stage = figure.querySelector('.compare-stage');
+  const slider = figure.querySelector('input[type="range"]');
+  function setSplit(raw) {
+    const split = Math.round(Math.min(100, Math.max(0, raw)));
+    stage.style.setProperty('--split', split + '%');
+    slider.value = String(split);
+    slider.setAttribute('aria-valuetext', '参考图占画面 ' + split + '%');
+  }
+  function pointerSplit(event) {
+    const frame = stage.getBoundingClientRect();
+    if (frame.width) setSplit((event.clientX - frame.left) / frame.width * 100);
+  }
+  setSplit(Number(slider.value));
+  slider.addEventListener('input', () => setSplit(Number(slider.value)));
+  stage.classList.add('is-interactive');
+  stage.addEventListener('pointerdown', event => {
+    if (!event.isPrimary || event.button !== 0) return;
+    stage.setPointerCapture(event.pointerId);
+    pointerSplit(event);
+  });
+  stage.addEventListener('pointermove', event => {
+    if (stage.hasPointerCapture(event.pointerId)) pointerSplit(event);
+  });
 });
 
 const timelapse = find('#timelapse');
 const video = find('#demo-video');
-function openTimelapse() {
-  if (location.hash === '#timelapse') timelapse.open = true;
+const tablist = find('.example-tabs');
+const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+const transformerTab = find('#tab-itransformer');
+const pidTab = find('#tab-pid');
+const pidPanel = find('#example-pid');
+
+function selectExample(activeTab) {
+  if (activeTab.hidden) return;
+  for (const tab of tabs) {
+    const selected = tab === activeTab;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+  }
+  if (activeTab !== transformerTab) video.pause();
 }
-all('a[href="#timelapse"]').forEach(link => link.addEventListener('click', () => { timelapse.open = true; }));
-window.addEventListener('hashchange', openTimelapse);
-openTimelapse();
+
+tabs.forEach(tab => tab.addEventListener('click', () => selectExample(tab)));
+tablist.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const available = tabs.filter(tab => !tab.hidden);
+  const index = available.indexOf(event.target);
+  if (index < 0) return;
+  let next;
+  switch (event.key) {
+    case 'ArrowLeft': next = (index - 1 + available.length) % available.length; break;
+    case 'ArrowRight': next = (index + 1) % available.length; break;
+    case 'Home': next = 0; break;
+    case 'End': next = available.length - 1; break;
+    default: return;
+  }
+  event.preventDefault();
+  selectExample(available[next]);
+  available[next].focus();
+});
+
+function openTimelapse() {
+  selectExample(transformerTab);
+  timelapse.open = true;
+}
+function followExampleLink() {
+  if (location.hash === '#timelapse') {
+    openTimelapse();
+    timelapse.scrollIntoView();
+  } else if (location.hash === '#example-pid' && !pidTab.hidden) {
+    selectExample(pidTab);
+    tablist.scrollIntoView();
+  }
+}
+all('a[href="#timelapse"]').forEach(link => link.addEventListener('click', openTimelapse));
+window.addEventListener('hashchange', followExampleLink);
+followExampleLink();
 timelapse.addEventListener('toggle', () => {
   if (!timelapse.open) video.pause();
 });
@@ -201,12 +250,17 @@ dialog.addEventListener('close', () => {
   opener?.focus();
 });
 
-fetchResource('downloads/release.json' + revision)
+fetchResource('downloads/release.json' + revision, {cache: 'no-cache'})
   .then(response => response.json())
   .then(release => {
     const currentDownload = find('.header-download').getAttribute('href');
     if (release.download_url === currentDownload && Number.isFinite(release.bytes)) {
       find('#release-size').textContent = 'ZIP · ' + Math.round(release.bytes / 1024) + ' KiB · MIT';
+    }
+    const pidDownload = pidPanel.querySelector('[download]').getAttribute('href');
+    if (Array.isArray(release.demo_downloads) && release.demo_downloads.includes(pidDownload)) {
+      pidTab.hidden = false;
+      if (location.hash === '#example-pid') followExampleLink();
     }
   })
   .catch(() => {});

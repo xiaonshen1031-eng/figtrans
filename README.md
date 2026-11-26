@@ -18,6 +18,12 @@
 - [下载示例 PPTX](https://xiaonshen1031-eng.github.io/figtrans/downloads/transformer-recreated.pptx)
 - [下载示例 Visio](https://xiaonshen1031-eng.github.io/figtrans/downloads/transformer-recreated.vsdx)
 
+PID 示例按参考图重建箭头轮廓，并按公式字形调整下标、积分号和分数线。可在 PowerPoint 中移动分组后的被控过程模块，查看箭头和进出连线是否跟随。参考图由 TravTigerEE 基于 Arturo Urquizo 的原图修订，参考图及 FigTrans 重建版按 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) 提供。
+
+- [对照 PID 参考图与重建结果](https://xiaonshen1031-eng.github.io/figtrans/#example-pid)
+- [下载 PID 示例 PPTX](https://xiaonshen1031-eng.github.io/figtrans/downloads/pid-recreated.pptx)
+- [Wikimedia Commons 参考图](https://commons.wikimedia.org/wiki/File:PID_en_updated_feedback.svg)
+
 ## v1.3.0
 
 按面板核对原文标签、曲线和接线点，再按最终摆放尺寸检查整图。检查必需标签时可多次传入 `--require-label`，核对可编辑文字和出现次数。保存重开时核对连线两端连接的实际对象。Visio 启动后按 Windows 进程和专用临时文档确认宿主。
@@ -40,5 +46,5 @@ Codex 模型选择器同时提供 **Sol** 和 **Ultra** 时，建议复杂重建
 ## 许可
 
 技能采用 [MIT](LICENSE) 许可。保留 [第三方声明](THIRD_PARTY_NOTICES.md)。
-MIT 许可适用于技能代码及本站原创实现。演示参考图由用户提供，参考图及其中内容保留各自权利。
+MIT 许可适用于技能代码及本站原创实现。演示参考图及其重建版遵循各示例标注的权利与许可。
 站点由 GitHub Pages 发布，字体使用本机字体回退。

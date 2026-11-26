@@ -37,3 +37,7 @@ SOFTWARE.
 ## Project experience
 
 The layout, connector, icon, equation and evidence rules incorporate this user's iterative figure corrections and the local nps-research-paper figure lessons. No manuscript data, personal paths, authorship blocks or paper-specific images are bundled. Word/MathType integration, when used, remains a separate installed capability and is not an implicit guarantee of MathType availability in either target application.
+
+## PID website example
+
+The [reference diagram](https://commons.wikimedia.org/wiki/File:PID_en_updated_feedback.svg) is by TravTigerEE, after Arturo Urquizo. The reference preview and the FigTrans adaptation, including the editable PPTX and its preview, are distributed under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The adaptation redraws the artwork as PowerPoint shapes, paths, text and attached connectors.
