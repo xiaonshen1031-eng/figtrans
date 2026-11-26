@@ -1,10 +1,10 @@
 # 安装 FigTrans
 
-FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.3.0**。代码与文档以 MIT 许可证开源。
+FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.4.0**。代码与文档以 MIT 许可证开源。
 
 ## 1. 下载并放入技能目录
 
-下载 `figtrans-v1.3.0.zip`，解压后保留完整的 `senior-figtrans` 文件夹，将其放入你自己的 Codex 技能目录：
+下载 `figtrans-v1.4.0.zip`，解压后保留完整的 `senior-figtrans` 文件夹，将其放入你自己的 Codex 技能目录：
 
 - Windows：`%USERPROFILE%\.codex\skills\senior-figtrans`
 - macOS / Linux：`~/.codex/skills/senior-figtrans`
@@ -35,6 +35,10 @@ FigTrans 的技能名称是 **Senior-FigTrans**，当前版本为 **1.3.0**。�
 也可以只选择 PPTX 或 Visio。每次启用时显示：
 
 **Copyright © NCEPU-Senior · Author: XiaoN**
+
+## 4. 精修 PowerPoint 图形
+
+箭头轮廓需要贴近原图时，测出箭尖和杆线接触点，再按接收模块编组。公式对照 PowerPoint 实际画出的字形来调整。用精修脚本生成单独的复测副本，完成改字、移位、保存重开，再核对连接。 [步骤和示例](../source/senior-figtrans/references/scene-helper.md#refine-an-existing-native-pptx)
 
 ## 能力与边界
 

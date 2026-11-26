@@ -5,7 +5,7 @@
 把参考图片重建成可继续修改的 PowerPoint PPTX 与 Visio VSDX。MIT 开源。
 
 - [访问网站与观看演示](https://xiaonshen1031-eng.github.io/figtrans/)
-- [下载技能 v1.3.0](https://xiaonshen1031-eng.github.io/figtrans/downloads/figtrans-v1.3.0.zip)
+- [下载技能 v1.4.0](https://xiaonshen1031-eng.github.io/figtrans/downloads/figtrans-v1.4.0.zip)
 - [安装说明](docs/docs/install.md)
 - [技能入口](senior-figtrans/SKILL.md)
 
@@ -24,9 +24,9 @@ PID 示例按参考图重建箭头轮廓，并按公式字形调整下标、积�
 - [下载 PID 示例 PPTX](https://xiaonshen1031-eng.github.io/figtrans/downloads/pid-recreated.pptx)
 - [Wikimedia Commons 参考图](https://commons.wikimedia.org/wiki/File:PID_en_updated_feedback.svg)
 
-## v1.3.0
+## v1.4.0
 
-按面板核对原文标签、曲线和接线点，再按最终摆放尺寸检查整图。检查必需标签时可多次传入 `--require-label`，核对可编辑文字和出现次数。保存重开时核对连线两端连接的实际对象。Visio 启动后按 Windows 进程和专用临时文档确认宿主。
+在 Windows 桌面 PowerPoint 中，可对已有原生对象做三项精修。将自定义矢量箭头和接收端口编入接收模块，按实际渲染的字形校准公式，再用单独的测试副本移动模块、修改文字并保存重开。结构校验读取保存后的对象关系，核对随动端点和应留在原处的端点。 [PowerPoint 精修流程](senior-figtrans/references/scene-helper.md#refine-an-existing-native-pptx)
 
 ## 使用
 

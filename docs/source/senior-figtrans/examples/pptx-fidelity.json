@@ -1,0 +1,26 @@
+{
+  "name": "pptx_fidelity",
+  "slide": 1,
+  "receiver_groups": [
+    {"id":"receiver_unit","members":["receiver","receiver_label","gain","gain_index"]}
+  ],
+  "arrowheads": [
+    {
+      "connector":"flow","receiver_group":"receiver_unit","direction":"right",
+      "tip":[220,105],"rear_offset":[-16.75,0],"fill":"#374F68",
+      "path": {
+        "start":[-20,-7],
+        "segments":[
+          {"type":"line","to":[0,0]},
+          {"type":"line","to":[-20,7]},
+          {"type":"cubic","control1":[-16,3],"control2":[-16,-3],"to":[-20,-7]}
+        ]
+      }
+    }
+  ],
+  "formula_placements": [
+    {"id":"gain","observed_baseline_pt":126,"target_baseline_pt":128,"evidence":"Native example export: the lower K ink edge is a baseline proxy at 126 pt before and 128 pt after +2 pt. Checked at 2 and 3 px/pt; replace with your own glyph measurements when fonts change."},
+    {"id":"gain_index","delta_x_pt":-4,"evidence":"Native example export at 3 px/pt: K ink right=282.667 pt and p ink left=288.333 pt. A -4 pt shift reduces the horizontal ink gap from 5.667 to 1.667 pt. Vertical placement stays unchanged."}
+  ],
+  "edit_check": {"move":"receiver_unit","delta":[12,0],"text":{"id":"receiver_label","value":"Edited receiver"}}
+}

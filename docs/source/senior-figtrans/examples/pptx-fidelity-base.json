@@ -1,0 +1,14 @@
+{
+  "name": "pptx_fidelity_base",
+  "canvas": {"width": 380, "height": 240},
+  "objects": [
+    {"id":"source","type":"rect","x":24,"y":80,"w":80,"h":50,"text":"Source","font_size":17,"fill":"#EDF4FA","stroke":"#374F68","stroke_width":1.5},
+    {"id":"receiver","type":"rect","x":220,"y":80,"w":120,"h":60,"fill":"#F2F0FA","stroke":"#374F68","stroke_width":1.5},
+    {"id":"receiver_label","type":"text","x":225,"y":84,"w":110,"h":24,"text":"Receiver","font_size":17,"stroke":"none"},
+    {"id":"gain","type":"text","x":266,"y":108,"w":22,"h":22,"text":"K","font":"Cambria Math","font_size":19,"text_margin":0,"stroke":"none"},
+    {"id":"gain_index","type":"text","x":285,"y":119,"w":12,"h":12,"text":"p","font":"Cambria Math","font_size":11,"text_margin":0,"stroke":"none"},
+    {"id":"sink","type":"rect","x":238,"y":188,"w":100,"h":32,"text":"Output","font_size":15,"fill":"#FFFFFF","stroke":"#374F68","stroke_width":1.5},
+    {"id":"flow","type":"connector","from":"source","to":"receiver","from_side":"right","to_side":"left","route":"straight","stroke":"#374F68","stroke_width":2,"head":"triangle","head_size":"large"},
+    {"id":"outgoing","type":"connector","from":"receiver","to":"sink","from_side":"bottom","to_side":"top","route":"straight","stroke":"#374F68","stroke_width":1.5,"head":"triangle","head_size":"medium"}
+  ]
+}
