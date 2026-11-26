@@ -53,6 +53,14 @@ def rectangle(sid, name, text=""):
             '<p:txBody><a:p><a:r><a:t>%s</a:t></a:r></a:p></p:txBody></p:sp>') % (sid, name, text)
 
 
+def visio(path, objects, connections=""):
+    package(path, {"[Content_Types].xml": '<Types xmlns="' + TYPE + '"/>',
+                   "_rels/.rels": rels(("rDoc", "officeDocument", "visio/document.xml")),
+                   "visio/document.xml": '<VisioDocument xmlns="' + V + '"/>',
+                   "visio/pages/page1.xml": '<PageContents xmlns="' + V + '"><Shapes>' + objects
+                       + '</Shapes><Connects>' + connections + '</Connects></PageContents>'})
+
+
 class AuditTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -163,6 +171,67 @@ class AuditTests(unittest.TestCase):
         result = MOD.audit(path, require_native=True)
         self.assertFalse(result["hard_failures"])
         self.assertFalse(result["pages"][0]["full_page_picture_candidates"])
+
+    def test_visio_canvas_backing_does_not_make_flat_art_native(self):
+        path = self.folder / "canvas-and-picture.vsdx"
+        shapes = ('<Shape ID="1" NameU="sft_canvas_background" Type="Shape">'
+                  '<Section N="Geometry" IX="0"/></Shape>'
+                  '<Shape ID="2" NameU="flattened-reference" Type="Foreign">'
+                  '<ForeignData ForeignType="Bitmap"/></Shape>')
+        visio(path, shapes)
+        result = MOD.audit(path, require_native=True)
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual(result["totals"]["native_shapes"], 1)
+        self.assertEqual(result["totals"]["canvas_background_shapes"], 1)
+        self.assertEqual(result["totals"].get("non_background_geometry", 0), 0)
+        self.assertIn("no_native_reconstruction_evidence", {f["code"] for f in result["hard_failures"]})
+
+    def test_pptx_repeated_endpoint_self_reference_and_invalid_site_fail(self):
+        path = self.folder / "invalid-endpoint.pptx"
+        prefix = '<p:cxnSp><p:nvCxnSpPr><p:cNvPr id="4" name="flow"/><p:cNvCxnSpPr>'
+        suffix = '</p:cNvCxnSpPr></p:nvCxnSpPr></p:cxnSp>'
+        cases = [
+            ('<a:stCxn id="2" idx="3"/><a:stCxn id="2" idx="3"/><a:endCxn id="2" idx="1"/>',
+             "duplicate_connector_endpoint"),
+            ('<a:stCxn id="2" idx="3"/><a:endCxn id="4" idx="1"/>', "connector_self_reference"),
+            ('<a:stCxn id="2" idx="-1"/><a:endCxn id="2" idx="1"/>', "invalid_connector_site"),
+        ]
+        for endpoints, code in cases:
+            with self.subTest(code=code):
+                ppt(path, rectangle("2", "node") + prefix + endpoints + suffix)
+                self.assertIn(code, {f["code"] for f in MOD.audit(path, True)["hard_failures"]})
+
+    def test_visio_repeated_endpoint_and_self_reference_fail(self):
+        path = self.folder / "invalid-glue.vsdx"
+        shapes = ('<Shape ID="1" NameU="node" Type="Shape"><Section N="Geometry" IX="0"/></Shape>'
+                  '<Shape ID="3" NameU="flow" Type="Shape"><Cell N="BeginX" V="0"/>'
+                  '<Cell N="EndX" V="1"/><Section N="Geometry" IX="0"/></Shape>')
+        start = '<Connect FromSheet="3" FromCell="BeginX" ToSheet="1" ToCell="PinX"/>'
+        end = '<Connect FromSheet="3" FromCell="EndX" ToSheet="1" ToCell="PinX"/>'
+        visio(path, shapes, start + start + end)
+        self.assertIn("duplicate_connector_endpoint", {f["code"] for f in MOD.audit(path, True)["hard_failures"]})
+        visio(path, shapes, start.replace('ToSheet="1"', 'ToSheet="3"') + end)
+        self.assertIn("connector_self_reference", {f["code"] for f in MOD.audit(path, True)["hard_failures"]})
+
+    def test_unattached_lines_and_a_loop_to_one_node_remain_native(self):
+        path = self.folder / "loop-and-line.pptx"
+        connected = ('<p:cxnSp><p:nvCxnSpPr><p:cNvPr id="4" name="loop"/><p:cNvCxnSpPr>'
+                     '<a:stCxn id="2" idx="3"/><a:endCxn id="2" idx="1"/>'
+                     '</p:cNvCxnSpPr></p:nvCxnSpPr></p:cxnSp>')
+        fixed = '<p:cxnSp><p:nvCxnSpPr><p:cNvPr id="5" name="fixed-path"/><p:cNvCxnSpPr/></p:nvCxnSpPr></p:cxnSp>'
+        ppt(path, rectangle("2", "node") + connected + fixed)
+        result = MOD.audit(path, True)
+        self.assertFalse(result["hard_failures"])
+        self.assertEqual(result["totals"]["connectors"], 2)
+        self.assertEqual(result["totals"]["attached_connectors"], 1)
+
+    def test_duplicate_object_ids_are_ambiguous_attachment_targets(self):
+        path = self.folder / "duplicate-ids.pptx"
+        ppt(path, rectangle("2", "first") + rectangle("2", "second"))
+        self.assertIn("duplicate_shape_id", {f["code"] for f in MOD.audit(path, True)["hard_failures"]})
+        path = self.folder / "duplicate-ids.vsdx"
+        visio(path, '<Shape ID="1" Type="Shape"><Section N="Geometry" IX="0"/></Shape>' * 2)
+        self.assertIn("duplicate_shape_id", {f["code"] for f in MOD.audit(path, True)["hard_failures"]})
 
 
 if __name__ == "__main__":

@@ -1,1 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#f3f1ea"/><path d="M64 78h1072M64 553h1072" stroke="#c8ceba"/><text x="64" y="56" font-family="Arial,sans-serif" font-size="24" font-weight="bold" letter-spacing="-1">FigTrans.</text><text x="1136" y="53" text-anchor="end" font-family="monospace" font-size="12" fill="#626c52">OPEN SOURCE / V1.1.0</text><text x="64" y="245" font-family="Arial,sans-serif" font-size="115" letter-spacing="-7" fill="#171a16">Figures,</text><path d="m259 401 291-9v28l-291 10z" fill="#dbff4f"/><text x="64" y="406" font-family="Arial,sans-serif" font-size="115" letter-spacing="-7" fill="#171a16">set <tspan font-family="Georgia,serif" font-style="italic">free.</tspan></text><g stroke="#424d30" stroke-width="2"><path d="M735 307h72m120-50 70-70m-70 120 70 70" fill="none"/><rect x="680" y="267" width="55" height="80" fill="#e2e7d5"/><rect x="807" y="257" width="120" height="100" fill="#dbff4f"/><rect x="997" y="157" width="126" height="61" fill="#f3f1ea"/><rect x="997" y="347" width="126" height="61" fill="#f3f1ea"/></g><text x="867" y="314" text-anchor="middle" font-family="Arial,sans-serif" font-size="22">Editable.</text><text x="1060" y="194" text-anchor="middle" font-family="monospace" font-size="20">.pptx</text><text x="1060" y="384" text-anchor="middle" font-family="monospace" font-size="20">.vsdx</text><text x="64" y="592" font-family="monospace" font-size="12" fill="#626c52">Copyright © NCEPU-Senior · Author: XiaoN</text><text x="1136" y="592" text-anchor="end" font-family="monospace" font-size="12" fill="#626c52">MIT LICENSE · PPTX / VISIO</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="background" cx=".82" cy=".13" r=".87">
+      <stop stop-color="#4b653e"/>
+      <stop offset="1" stop-color="#24362a"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0v48" fill="none" stroke="#e3eccd" stroke-opacity=".16"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <text x="66" y="108" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="23" font-weight="700" letter-spacing="4">FIGTRANS</text>
+  <g font-family="Microsoft YaHei UI,Microsoft YaHei,sans-serif" font-size="58" font-weight="700">
+    <text x="64" y="239" fill="white">重建科研插图</text>
+    <text x="64" y="324" fill="#e3eccd">保留可编辑对象</text>
+  </g>
+  <text x="66" y="405" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="24">PowerPoint PPTX / Visio VSDX</text>
+  <rect x="638" y="122" width="494" height="384" rx="22" fill="#fafbf5" stroke="#aab99c"/>
+  <text x="668" y="181" fill="#253226" font-family="Microsoft YaHei UI,Microsoft YaHei,sans-serif" font-size="25" font-weight="700">原生对象和附着连接</text>
+  <g stroke="#324b32" stroke-width="2.5">
+    <path d="M805 315H846M952 315C1002 315 990 258 1022 258M952 315C1002 315 990 371 1022 371" fill="none"/>
+    <rect x="680" y="276" width="125" height="77" rx="8" fill="#e9f0db"/>
+    <rect x="846" y="276" width="106" height="77" rx="8" fill="#dbff4f"/>
+    <rect x="1022" y="235" width="72" height="46" rx="6" fill="#e9f0db"/>
+    <rect x="1022" y="348" width="72" height="46" rx="6" fill="#e9f0db"/>
+    <circle cx="846" cy="315" r="5" fill="#466b2d"/>
+    <circle cx="952" cy="315" r="5" fill="#466b2d"/>
+  </g>
+  <g fill="#24362a" font-family="Microsoft YaHei UI,Microsoft YaHei,Segoe UI,sans-serif" text-anchor="middle">
+    <text x="742" y="323" font-size="22">参考图</text>
+    <text x="899" y="323" font-size="22">节点</text>
+    <text x="1058" y="265" font-size="16">PPTX</text>
+    <text x="1058" y="378" font-size="16">VSDX</text>
+  </g>
+  <text x="66" y="559" fill="#e3eccd" font-family="Segoe UI,Arial,sans-serif" font-size="18">Senior-FigTrans · MIT</text>
+</svg>

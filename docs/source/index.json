@@ -1,7 +1,7 @@
 {
   "name": "Senior-FigTrans",
   "display_name": "FigTrans",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "author": "XiaoN",
   "copyright": "NCEPU-Senior",
@@ -53,8 +53,8 @@
     {
       "path": "references/scene-helper.md",
       "url": "source/senior-figtrans/references/scene-helper.md",
-      "bytes": 7361,
-      "sha256": "be0614be51b9a9a7641808157a04fa0435b73d31ca72350e91f6827a1567c90d",
+      "bytes": 7500,
+      "sha256": "5d5714d64428cbc4e32df0212f45c4d4aad72ec97aad5a5aaa055e40382021d3",
       "type": "text"
     },
     {
@@ -67,8 +67,8 @@
     {
       "path": "scripts/audit_editability.py",
       "url": "source/senior-figtrans/scripts/audit_editability.py",
-      "bytes": 22372,
-      "sha256": "d89443b69b5ec705c6fc1325dc720cfd6dfa619a23d5197dc6e81bfa5f98ed29",
+      "bytes": 24867,
+      "sha256": "67f22e38503a4edb2b5edf92c9abf09b340acc320feb03513c00968654d03568",
       "type": "python"
     },
     {
@@ -88,15 +88,15 @@
     {
       "path": "SKILL.md",
       "url": "source/senior-figtrans/SKILL.md",
-      "bytes": 8404,
-      "sha256": "fb9ec8e725b3a90c36195a209833f9dbb3ced0a864d4310c3e864625ffb69e76",
+      "bytes": 8795,
+      "sha256": "e8543b76a88970d0560c1468c17957d1f647b2526f58ddeb7887967baf43d420",
       "type": "text"
     },
     {
       "path": "tests/test_audit_editability.py",
       "url": "source/senior-figtrans/tests/test_audit_editability.py",
-      "bytes": 9902,
-      "sha256": "f2f089d7b893fbad86feb0d0072fe9f988c723c9a541b997971e36b7ef20fd18",
+      "bytes": 14342,
+      "sha256": "5736c0c539117863ce11a065c65924476cc71dcb13f9fb3fdc1ad3d691c4579c",
       "type": "python"
     },
     {

@@ -6,7 +6,7 @@ metadata:
   display-name: "Senior-FigTrans"
   author: "XiaoN"
   copyright: "Copyright (c) 2026 NCEPU-Senior"
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Senior-FigTrans
@@ -58,6 +58,8 @@ metadata:
 
 执行 [scripts/audit_editability.py](scripts/audit_editability.py) 查看结构，然后对照参考图和实际渲染检查。结构脚本不能替代视觉审阅。
 
+- 结构验收采用 `--require-native`。Visio 辅助脚本生成的专用画布底板不计入重建证据。把记录了双端附着的连接与用途逐段核对，固定线段按可编辑几何检查。
+- 处理重复对象 ID、重复端点或指向连接器自身的附着后，重新审计实际交付文件。需要随对象移动的连线应通过目标软件内的移动检查。
 - 所有可读标签、模块、分支、图例及编号都在对应位置；看不清的文字明确保留为待确认项，不能编造。
 - 所有图例样式能在图中找到语义一致的实例；每个编号有清晰所属区域。
 - 主连接的线宽协调，箭头头部长度和宽度分别适当；转角、连接处无缺口、重叠、裁切、小尾巴或双重箭头。

@@ -215,13 +215,23 @@ def pptx_inventory(archive, names, by_source, failures):
                     counts["connectors"] += 1
                     ends = []
                     for endpoint in ("stCxn", "endCxn"):
-                        node = element.find(".//a:" + endpoint, NS)
-                        if node is not None:
+                        nodes = element.findall("p:nvCxnSpPr/p:cNvCxnSpPr/a:" + endpoint, NS)
+                        if len(nodes) > 1:
+                            failures.append({"code": "duplicate_connector_endpoint", "part": part,
+                                             "connector": identity.get("name"), "endpoint": endpoint})
+                        for node in nodes:
                             ends.append({"endpoint": endpoint, "shape_id": node.get("id"), "site": node.get("idx")})
+                            site = node.get("idx", "")
+                            if not re.fullmatch(r"[0-9]+", site):
+                                failures.append({"code": "invalid_connector_site", "part": part,
+                                                 "connector": identity.get("name"), "endpoint": endpoint, "site": site})
                     item["attachments"] = ends
-                    item["attachment_mode"] = "both_ends" if len(ends) == 2 else "one_end" if ends else "unattached"
+                    endpoints = Counter(end["endpoint"] for end in ends)
+                    both = endpoints == Counter({"stCxn": 1, "endCxn": 1})
+                    repeated = any(number > 1 for number in endpoints.values())
+                    item["attachment_mode"] = "invalid" if repeated else "both_ends" if both else "one_end" if ends else "unattached"
                     connections.append({**identity, "attachments": ends})
-                    counts["attached_connectors"] += int(len(ends) == 2)
+                    counts["attached_connectors"] += int(both)
                 if kind == "graphicFrame":
                     counts["graphic_frames"] += 1
                 tables = element.findall(".//a:tbl", NS)
@@ -252,10 +262,16 @@ def pptx_inventory(archive, names, by_source, failures):
         if tree is not None:
             walk(tree)
         all_ids = {i.get("id") for i in items if i.get("id")}
+        for shape_id, number in Counter(i.get("id") for i in items if i.get("id")).items():
+            if number > 1:
+                failures.append({"code": "duplicate_shape_id", "part": part, "shape_id": shape_id})
         for conn in connections:
             for end in conn["attachments"]:
                 if end["shape_id"] not in all_ids:
                     failures.append({"code": "missing_connector_shape", "part": part,
+                                     "connector": conn.get("name"), **end})
+                elif end["shape_id"] == conn.get("id"):
+                    failures.append({"code": "connector_self_reference", "part": part,
                                      "connector": conn.get("name"), **end})
         pages.append({"part": part, "counts": dict(counts), "objects": items,
                       "readable_text": texts, "connections": connections,
@@ -313,9 +329,14 @@ def visio_inventory(archive, names, by_source, failures):
                     # Geometry may be inherited from a master. Record this separately rather than inventing it.
                     geom = shape.findall("v:Section[@N='Geometry']", NS)
                     one_d = any(k in cells for k in ("BeginX", "EndX"))
+                    background = (identity["name"] == "sft_canvas_background" and not ancestor_groups
+                                  and not label and not one_d)
+                    item["background_candidate"] = background
+                    if background:
+                        counts["canvas_background_shapes"] += 1
                     if one_d:
                         counts["one_dimensional_shapes"] += 1
-                    if geom or shape.get("Master") or shape.get("MasterShape"):
+                    if not background and (geom or shape.get("Master") or shape.get("MasterShape")):
                         counts["non_background_geometry"] += 1
                     item["has_local_geometry"] = bool(geom)
                     item["master"] = shape.get("Master")
@@ -328,14 +349,28 @@ def visio_inventory(archive, names, by_source, failures):
         shapes = root.find("v:Shapes", NS)
         if shapes is not None:
             walk(shapes)
-        ids = {i["id"] for i in objects}
+        ids = {i["id"] for i in objects if i["id"]}
+        for shape_id, number in Counter(i["id"] for i in objects if i["id"]).items():
+            if number > 1:
+                failures.append({"code": "duplicate_shape_id", "part": part, "shape_id": shape_id})
         connections = [dict(c.attrib) for c in root.findall("v:Connects/v:Connect", NS)]
         attached = {}
+        declared_endpoints = set()
         for conn in connections:
             from_id, to_id = conn.get("FromSheet"), conn.get("ToSheet")
             for field, value in (("FromSheet", from_id), ("ToSheet", to_id)):
                 if value not in ids:
                     failures.append({"code": "missing_connector_shape", "part": part, "field": field, "shape_id": value})
+            endpoint = conn.get("FromCell")
+            if endpoint in {"BeginX", "EndX"}:
+                key = (from_id, endpoint)
+                if key in declared_endpoints:
+                    failures.append({"code": "duplicate_connector_endpoint", "part": part,
+                                     "connector_id": from_id, "endpoint": endpoint})
+                declared_endpoints.add(key)
+                if from_id == to_id:
+                    failures.append({"code": "connector_self_reference", "part": part,
+                                     "connector_id": from_id, "endpoint": endpoint})
             attached.setdefault(from_id, set()).add(conn.get("FromCell"))
         counts["connection_records"] = len(connections)
         counts["attached_connectors"] = sum({"BeginX", "EndX"}.issubset(cells) for cells in attached.values())
